@@ -1,0 +1,6 @@
+BASE_URL = "https://api.openweathermap.org/data/2.5"
+GEO_BASE_URL = "https://api.openweathermap.org"
+CURRENT_ENDPOINT = "/weather"
+FORECAST_ENDPOINT = "/forecast"
+LANG = "pt_br"
+UNITS = "metric"
