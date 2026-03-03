@@ -1,5 +1,5 @@
 import pytest
-import responses
+from openweather_sdk import OpenWeatherSDK
 
 @pytest.fixture
 def sdk():
