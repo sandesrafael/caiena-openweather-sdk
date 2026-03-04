@@ -31,6 +31,10 @@ OPENWEATHER_API_KEY=sua_chave_aqui
 ## Como testar localmente com `example.py`
 
 ```bash
+# Instalar dependencias do exemplo
+uv pip install -e ".[example]"
+
+# Rodar o exemplo
 uv run --active python example.py
 ```
 
@@ -51,7 +55,7 @@ Use `--active` para o `uv` reaproveitar o ambiente virtual ja ativo
 
 ## Modelos retornados
 
-- `CurrentWeather(city, temp, description, date)`
+- `CurrentWeather(city, state, temp, description, date)`
 - `DailyForecast(date, avg_temp)`
 
 ## Excecoes

@@ -8,25 +8,25 @@ load_dotenv()
 API_KEY = os.getenv("OPENWEATHER_API_KEY")
 
 if not API_KEY:
-    print("❌ Coloque sua chave no arquivo .env antes de rodar!")
+    print("Coloque sua chave no arquivo .env antes de rodar!")
     exit(1)
 
 sdk = OpenWeatherSDK(api_key=API_KEY)
 
 try:
-    print("🌡️  Buscando dados...")
+    print("Buscando dados...")
     
-    current = sdk.get_current("Rio de Janeiro,BR")
-    forecast = sdk.get_five_day_daily_forecast("Rio de Janeiro,BR")
+    current = sdk.get_current("Rio de Janeiro")
+    forecast = sdk.get_five_day_daily_forecast("Rio de Janeiro")
     
-    print(f"\n✅ Temperatura atual em {current.city}:")
+    print(f"\nTemperatura atual em {current.city}:")
     print(f"   {current.temp}°C - {current.description} ({current.date})")
     
-    print("\n📅 Previsão média dos próximos 5 dias:")
+    print("\nPrevisão média dos próximos 5 dias:")
     for day in forecast:
         print(f"   {day.date}: {day.avg_temp}°C")
 
 except CityNotFoundError:
-    print("❌ Cidade não encontrada")
+    print("Cidade não encontrada")
 except Exception as e:
-    print(f"❌ Erro: {e}")
+    print(f"Erro: {e}")
