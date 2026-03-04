@@ -60,12 +60,31 @@ def test_get_current_uses_state_in_geocoding_query(sdk):
     assert result.state == "Illinois"
 
 
-def test_city_not_found_for_empty_geocoding_result(sdk):
+def test_city_not_found_includes_city_and_country_in_message(sdk):
     geo_response = _mock_response(200, [])
 
     with patch.object(sdk.session, "get", return_value=geo_response):
-        with pytest.raises(CityNotFoundError):
-            sdk.get_current("CidadeInexistente", "BR")
+        with pytest.raises(CityNotFoundError, match="Rio de Janeiro.*US"):
+            sdk.get_current("Rio de Janeiro", "US")
+
+
+def test_city_not_found_includes_state_in_message(sdk):
+    geo_response = _mock_response(200, [])
+
+    with patch.object(sdk.session, "get", return_value=geo_response):
+        with pytest.raises(CityNotFoundError, match="Osasco.*JP.*Tokyo"):
+            sdk.get_current("Osasco", "JP", "Tokyo")
+
+
+def test_city_not_found_when_geocoding_returns_mismatched_name(sdk):
+    geo_response = _mock_response(
+        200,
+        [{"name": "City of Syracuse", "state": "New York", "country": "US", "lat": 43.0, "lon": -76.1}],
+    )
+
+    with patch.object(sdk.session, "get", return_value=geo_response):
+        with pytest.raises(CityNotFoundError, match="us.*US"):
+            sdk.get_current("us", "US", "US")
 
 
 def test_get_five_day_daily_forecast_averages_by_day(sdk):
