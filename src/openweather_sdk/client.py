@@ -30,6 +30,12 @@ class OpenWeatherSDK:
 
         return response.json()
 
+    @staticmethod
+    def _names_match(input_city: str, returned_name: str) -> bool:
+        input_words = set(input_city.lower().split())
+        returned_words = set(returned_name.lower().split())
+        return bool(input_words & returned_words)
+
     def _get_location(
         self,
         city: str,
@@ -45,13 +51,24 @@ class OpenWeatherSDK:
         data = self._make_request(GEO_BASE_URL, "/geo/1.0/direct", params)
 
         if not data:
-            raise CityNotFoundError(f"Cidade nao encontrada: {city}")
+            detail = f"Cidade '{city}' nao encontrada para o pais '{country}'"
+            if state:
+                detail += f" e estado '{state}'"
+            raise CityNotFoundError(detail)
 
         location = data[0]
+        returned_name = location.get("name", "")
+
+        if not self._names_match(city, returned_name):
+            detail = f"Cidade '{city}' nao encontrada para o pais '{country}'"
+            if state:
+                detail += f" e estado '{state}'"
+            raise CityNotFoundError(detail)
+
         return {
             "lat": location["lat"],
             "lon": location["lon"],
-            "name": location.get("name", city),
+            "name": returned_name,
             "state": location.get("state"),
         }
 
