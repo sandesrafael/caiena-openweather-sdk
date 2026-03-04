@@ -32,6 +32,7 @@ def test_get_current_success(sdk):
         result = sdk.get_current("Rio de Janeiro")
 
     assert result.city == "Rio de Janeiro"
+    assert result.state is None
     assert result.temp == 28.5
     assert result.description == "nublado"
     assert get_mock.call_count == 2
@@ -52,17 +53,15 @@ def test_get_current_uses_state_in_geocoding_query(sdk):
     )
 
     with patch.object(sdk.session, "get", side_effect=[geo_response, current_response]) as get_mock:
-        sdk.get_current("Springfield", "US", "Illinois")
+        result = sdk.get_current("Springfield", "US", "Illinois")
 
     first_call_params = get_mock.call_args_list[0].kwargs["params"]
     assert first_call_params["q"] == "Springfield,Illinois,US"
+    assert result.state == "Illinois"
 
 
-def test_city_not_found_for_mismatched_geocoding_result(sdk):
-    geo_response = _mock_response(
-        200,
-        [{"name": "Curitiba", "country": "BR", "lat": -25.42, "lon": -49.27}],
-    )
+def test_city_not_found_for_empty_geocoding_result(sdk):
+    geo_response = _mock_response(200, [])
 
     with patch.object(sdk.session, "get", return_value=geo_response):
         with pytest.raises(CityNotFoundError):

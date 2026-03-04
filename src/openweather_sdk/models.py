@@ -1,9 +1,10 @@
 from dataclasses import dataclass
-from datetime import datetime
+
 
 @dataclass(frozen=True)
 class CurrentWeather:
     city: str
+    state: str | None
     temp: float
     description: str
     date: str  # DD/MM
